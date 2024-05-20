@@ -1,0 +1,23 @@
+﻿@model ManagingAccessService.Models.DbModels.UserAccount
+<main>
+    @using (Html.BeginForm("Login", "Authorization", FormMethod.Post))
+    {
+        <h1 class="loginregH1">Авторизация</h1>
+        <div>
+            <label>Логин</label>
+            @Html.TextBoxFor(model => model.Login)
+        </div>
+        <div>
+            <label>Пароль</label>
+            @Html.TextBoxFor(model => model.Password)
+        </div>
+        @if (!string.IsNullOrEmpty(ViewBag.ErrorMessage))
+        {
+            <div class="alert alert-danger" role="alert">
+                @ViewBag.ErrorMessage
+            </div>
+        }
+        <button type="submit" class="btn btn-primary">Войти</button>
+        <button type="button" class="btn btn-primary" onclick="location.href='@Url.Action("Registration", "Authorization")'">Регистрация</button>
+    }
+</main>

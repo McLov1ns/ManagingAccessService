@@ -1,0 +1,22 @@
+﻿:root {
+    --background: #325050;
+    --primary: #FFFFFF;
+    --secondary: #D8D8D8;
+    --foreground: #878787;
+    --accent: #A43434;
+}
+body {
+    background-color: var(--background);
+    font-family: cursive;
+    min-width: 350px;
+}
+footer {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    text-align: center;
+    width: 99%;
+    font-size: 19px;
+    font-weight: bold;
+    background-color: var(--background);
+}
