@@ -28,37 +28,73 @@ namespace ManagingAccessService.Controllers
             return View();
         }
         [HttpPost]
+        //public async Task<IActionResult> Login(UserAccount model)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        var user = _context.UserAccounts.FirstOrDefault(u => u.Login == model.Login);
+
+        //        if (user != null)
+        //        {
+
+        //            var encpass = EncryptPassword(model.Password!);
+        //            if (encpass == user.Password)
+        //            {
+        //                var claims = new List<Claim>
+        //                {
+        //                    new Claim(ClaimTypes.Name, model.Login!),
+        //                    new Claim(ClaimTypes.NameIdentifier, user.AccountId.ToString())
+        //                };
+
+        //                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+        //                var authProperties = new AuthenticationProperties
+        //                {
+        //                };
+
+        //                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
+        //                return RedirectToAction("Index", "Home");
+        //            }
+        //        }
+        //        ViewBag.ErrorMessage = "Неверный логин или пароль";
+        //    }
+
+        //    return View(model);
+        //}
         public async Task<IActionResult> Login(UserAccount model)
         {
             if (ModelState.IsValid)
             {
+                Role role = _context.Roles.FirstOrDefault(q => q.Name == "Пользователь");
                 var user = _context.UserAccounts.FirstOrDefault(u => u.Login == model.Login);
-
                 if (user != null)
                 {
-                    
                     var encpass = EncryptPassword(model.Password!);
-                    if (encpass == user.Password)
+                    if (encpass == user.Password && role != null)
                     {
-                        var claims = new List<Claim>
-                        {
-                            new Claim(ClaimTypes.Name, model.Login!),
-                            new Claim(ClaimTypes.NameIdentifier, user.AccountId.ToString())
-                        };
+                        user.Role = role;
+                        await Authenticate(user); // аутентификация
 
-                        var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                        var authProperties = new AuthenticationProperties
-                        {
-                        };
-
-                        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
                         return RedirectToAction("Index", "Home");
                     }
                 }
                 ViewBag.ErrorMessage = "Неверный логин или пароль";
             }
-
             return View(model);
+        }
+        private async Task Authenticate(UserAccount user)
+        {
+            // создаем один claim
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimsIdentity.DefaultNameClaimType, user.Login),
+                new Claim(ClaimsIdentity.DefaultRoleClaimType, user.Role?.Name),
+                new Claim(ClaimTypes.NameIdentifier, user.AccountId.ToString()),
+            };
+            // создаем объект ClaimsIdentity
+            ClaimsIdentity id = new ClaimsIdentity(claims, "ApplicationCookie", ClaimsIdentity.DefaultNameClaimType,
+                ClaimsIdentity.DefaultRoleClaimType);
+            // установка аутентификационных куки
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(id));
         }
         public async Task<IActionResult> Exit()
         {
@@ -82,10 +118,9 @@ namespace ManagingAccessService.Controllers
         public IActionResult Registration()
         {
             return View();
-
         }
         [HttpPost]
-        public IActionResult Registration(UserAccount model, Role rol)
+        public IActionResult Registration(UserAccount model)
         {
             if (ModelState.IsValid)
             {
@@ -95,19 +130,21 @@ namespace ManagingAccessService.Controllers
                     ViewBag.ErrorMessage = "Пользователь с таким логином уже существует.";
                     return View(model);
                 }
-                var account = new UserAccount
+                var userRole = _context.Roles.FirstOrDefault(q => q.Name == "Пользователь");
+
+                var user = new UserAccount
                 {
                     LastLogin = DateOnly.FromDateTime(DateTime.Today),
                     Login = model.Login,
-                    Password = EncryptPassword(model.Password!),
-                    RoleId = 2
-                };
-                var role = new Role
-                {
-                    Name = rol.Name
+                    Password = EncryptPassword(model.Password!)
                 };
 
-                _context.UserAccounts.Add(account);
+                if (userRole != null)
+                {
+                    user.Role = userRole;
+                }
+
+                _context.UserAccounts.Add(user);
                 _context.SaveChanges();
 
                 return RedirectToAction("Login");

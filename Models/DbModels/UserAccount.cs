@@ -11,7 +11,6 @@ public partial class UserAccount
     public int AccountId { get; set; }
 
     public int? EmployeeId { get; set; }
-    public int RoleId { get; set; }
     public string? Email { get; set; }
 
     public string? Login { get; set; }
@@ -29,5 +28,6 @@ public partial class UserAccount
     public virtual ICollection<AccessLog> AccessLogs { get; set; } = new List<AccessLog>();
 
     public virtual Employee? Employee { get; set; }
+    public int RoleId { get; set; }
     public virtual Role? Role { get; set;}
 }

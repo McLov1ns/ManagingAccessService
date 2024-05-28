@@ -1,55 +1,36 @@
 ﻿@{
     var listMenu = new ManagingAccessService.Models.Menu.ListMenu();
+    string userRole = ViewBag.UserRole;
 }
 <header>
     <div class="divHeader">
         <nav>
             <ul>
+                <p>авторизированны, @User.Identity.Name</p>
                 @if (User.Identity!.IsAuthenticated == false)
                 {
-                    @foreach (var item in listMenu.HeaderMenu)
+                    @foreach (var item in listMenu.Menu)
                     {
                         <li class="headerli"><button class="btn btn-primary"><a class="aClass" href="@Url.Action(item.Action, item.Controller)">@item.Label</a></button></li>
                     }
+                }
+                else if (userRole == "Пользователь")
+                {
+                    @foreach (var item in listMenu.UserMenu)
+                    {
+                        <li class="headerli"><button class="btn btn-primary"><a class="aClass" href="@Url.Action(item.Action, item.Controller)">@item.Label</a></button></li>
+                    }
+                    <p style="font-size: 10pt;">Добро пожаловать, @User.Identity.Name!</p>
+                }
+                else if (userRole == "Администратор")
+                {
+                    @foreach (var item in listMenu.AdminMenu)
+                    {
+                        <li class="headerli"><button class="btn btn-primary"><a class="aClass" href="@Url.Action(item.Action, item.Controller)">@item.Label</a></button></li>
+                    }
+                    <p style="font-size: 10pt;">Добро пожаловать, @User.Identity.Name!</p>
                 }
             </ul>
         </nav>
     </div>
 </header>
-@* <div style="display:flex; justify-content:space-between; align-items:center;">
-    <ul style="display:flex; list-style-type: none; margin-left:10px; ">
-        <li> 
-            <a asp-action="Index" asp-controller="Home">Домашняя страница</a> 
-        </li>
-    </ul>
-    @if (User.Identity.Name == null)
-    {
-    <div style="display:block;">
-        <p>авторизация</p>
-        <form method="post" asp-action="Authorization" asp-controller="Authorization">
-            <div>
-                <label>Логин:</label>
-                <input type="text" name="login" />
-            </div>
-            <div>
-                <lable>Пароль:</lable>
-                <input type="text" name="password" />
-            </div>
-            <input asp-action="Login" asp-controller="Authorization" type="submit" value="Войти" />
-        </form>
-        <form>
-            <input type="submit" asp-action="Registration" asp-controller="Authorization" value="регистрация" />
-        </form>
-        </div>
-    }
-    else
-    {
-        <div>
-            <h1>Добро пожаловать @User.Identity.Name</h1>
-            <form>
-                <input type="submit" value="выход" asp-action="Exit" asp-controller="Authorization" />
-            </form>
-
-        </div>
-    }
-</div> *@

@@ -14,18 +14,18 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).
     AddCookie(option =>
     {
-        option.LoginPath = new PathString("/Authentication/Login");
-        option.LogoutPath = new PathString("/Aunthetication/Login");
+        option.LoginPath = new PathString("/Authorization/Login");
+        option.LogoutPath = new PathString("/Authorization/Login");
     });
 
-builder.Services.AddAuthorization();
+//builder.Services.AddAuthorization();
 
 var app = builder.Build();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
-app.UseAuthorization();
 app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
