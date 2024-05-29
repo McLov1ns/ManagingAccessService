@@ -18,7 +18,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         option.LogoutPath = new PathString("/Authorization/Login");
     });
 
-//builder.Services.AddAuthorization();
+builder.Services.AddAuthorization();
 
 var app = builder.Build();
 app.UseHttpsRedirection();

@@ -1,4 +1,5 @@
-﻿@{
+﻿@using System.Security.Claims
+@{
     var listMenu = new ManagingAccessService.Models.Menu.ListMenu();
     string userRole = ViewBag.UserRole;
 }
@@ -6,7 +7,6 @@
     <div class="divHeader">
         <nav>
             <ul>
-                <p>авторизированны, @User.Identity.Name</p>
                 @if (User.Identity!.IsAuthenticated == false)
                 {
                     @foreach (var item in listMenu.Menu)
@@ -14,16 +14,18 @@
                         <li class="headerli"><button class="btn btn-primary"><a class="aClass" href="@Url.Action(item.Action, item.Controller)">@item.Label</a></button></li>
                     }
                 }
-                else if (userRole == "Пользователь")
+                else if (User.IsInRole("Пользователь"))
                 {
+                    <p>авторизированны, @User.FindFirst(ClaimTypes.Role).Value</p>
                     @foreach (var item in listMenu.UserMenu)
                     {
                         <li class="headerli"><button class="btn btn-primary"><a class="aClass" href="@Url.Action(item.Action, item.Controller)">@item.Label</a></button></li>
                     }
                     <p style="font-size: 10pt;">Добро пожаловать, @User.Identity.Name!</p>
                 }
-                else if (userRole == "Администратор")
+                else if (User.IsInRole("Администратор"))
                 {
+                    <p>авторизированны, @User.FindFirst(ClaimTypes.Role).Value</p>
                     @foreach (var item in listMenu.AdminMenu)
                     {
                         <li class="headerli"><button class="btn btn-primary"><a class="aClass" href="@Url.Action(item.Action, item.Controller)">@item.Label</a></button></li>

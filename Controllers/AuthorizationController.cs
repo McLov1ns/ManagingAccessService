@@ -28,44 +28,12 @@ namespace ManagingAccessService.Controllers
             return View();
         }
         [HttpPost]
-        //public async Task<IActionResult> Login(UserAccount model)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        var user = _context.UserAccounts.FirstOrDefault(u => u.Login == model.Login);
-
-        //        if (user != null)
-        //        {
-
-        //            var encpass = EncryptPassword(model.Password!);
-        //            if (encpass == user.Password)
-        //            {
-        //                var claims = new List<Claim>
-        //                {
-        //                    new Claim(ClaimTypes.Name, model.Login!),
-        //                    new Claim(ClaimTypes.NameIdentifier, user.AccountId.ToString())
-        //                };
-
-        //                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-        //                var authProperties = new AuthenticationProperties
-        //                {
-        //                };
-
-        //                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
-        //                return RedirectToAction("Index", "Home");
-        //            }
-        //        }
-        //        ViewBag.ErrorMessage = "Неверный логин или пароль";
-        //    }
-
-        //    return View(model);
-        //}
         public async Task<IActionResult> Login(UserAccount model)
         {
             if (ModelState.IsValid)
             {
-                Role role = _context.Roles.FirstOrDefault(q => q.Name == "Пользователь");
                 var user = _context.UserAccounts.FirstOrDefault(u => u.Login == model.Login);
+                Role role = _context.Roles.FirstOrDefault(q => q.RoleId == user.RoleId);
                 if (user != null)
                 {
                     var encpass = EncryptPassword(model.Password!);

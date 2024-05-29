@@ -15,10 +15,6 @@ namespace Lab1.Controllers
         public HomeController(ManagingAccessServiceContext context)
         {
             _context = context;
-            if(User != null)
-            {
-                CheckRole();
-            }
         }
         public void CheckRole()
         {
@@ -28,7 +24,7 @@ namespace Lab1.Controllers
             string userRole = "";
             if (user != null)
             {
-                userRole = user.Role.Name;
+                userRole = _context.Roles.FirstOrDefault(q => q.RoleId == user.RoleId).Name;
             }
 
             ViewBag.UserRole = userRole;
@@ -77,6 +73,7 @@ namespace Lab1.Controllers
         [HttpPost]
         public async Task<IActionResult> AddEmployee(Employee employee)
         {
+            CheckRole();
             if (ModelState.IsValid)
             {
                 // Получение максимального значения EmployeeId из базы данных
@@ -102,6 +99,7 @@ namespace Lab1.Controllers
         [Authorize]
         public IActionResult Index()
         {
+            CheckRole();
             return View();
         }
     }
