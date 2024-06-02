@@ -11,6 +11,7 @@ public partial class ManagingAccessServiceContext : DbContext
         : base(options)
     {
         Database.EnsureCreated();
+        //DbInitializer.Initialize(this);
     }
 
     public virtual DbSet<AccessLog> AccessLogs { get; set; }
@@ -139,7 +140,6 @@ public partial class ManagingAccessServiceContext : DbContext
             entity.HasKey(e => e.EmployeeId).HasName("PK__Employee__78113481A2F5682C");
 
             entity.Property(e => e.EmployeeId)
-                .ValueGeneratedNever()
                 .HasColumnName("Employee_ID");
             entity.Property(e => e.ContactInformation)
                 .HasMaxLength(255)
@@ -224,8 +224,8 @@ public partial class ManagingAccessServiceContext : DbContext
             entity.HasKey(e => e.OrganizationId).HasName("PK__Organiza__A6FA250696BD1872");
 
             entity.Property(e => e.OrganizationId)
-                .ValueGeneratedNever()
-                .HasColumnName("Organization_ID");
+            .HasColumnName("Organization_ID")
+            .ValueGeneratedOnAdd();
             entity.Property(e => e.Inn)
                 .HasMaxLength(20)
                 .IsUnicode(false)
@@ -339,6 +339,50 @@ public partial class ManagingAccessServiceContext : DbContext
 
         OnModelCreatingPartial(modelBuilder);
     }
+    public static class DbInitializer
+    {
+        public static void Initialize(ManagingAccessServiceContext context)
+        {
+            if (context.Employees.Any())
+            {
+                return;   // Данные уже инициализированы
+            }
+
+            // Добавление данных в таблицу Employees
+            var employees = new[]
+            {
+            new Employee { EmployeeId = 1, FullName = "Иванов Иван Иванович", Gender = "Мужской", DateOfBirth = DateOnly.Parse("1990-05-15"), Identifier = "12345678", ContactInformation = "телефон: 123-456, email: ivanov@example.com", Status = "Активный" },
+            new Employee { EmployeeId = 2, FullName = "Петров Петр Петрович", Gender = "Мужской", DateOfBirth = DateOnly.Parse("1985-08-25"), Identifier = "87654321", ContactInformation = "телефон: 987-654, email: petrov@example.com", Status = "Активный" }
+        };
+            context.Employees.AddRange(employees);
+
+            // Добавление данных в таблицу Roles
+            var roles = new[]
+            {
+            new Role { RoleId = 1, Name = "Администратор" },
+            new Role { RoleId = 2, Name = "Пользователь" }
+        };
+            context.Roles.AddRange(roles);
+
+            // Добавление данных в таблицу Organizations
+            var organizations = new[]
+            {
+            new Organization { OrganizationId = 1, Name = "ООО \"Рога и копыта\"", Inn = "1234567890", Ogrn = "0987654321", Status = "Активная" },
+            new Organization { OrganizationId = 2, Name = "ООО \"Птичка\"", Inn = "9876543210", Ogrn = "0123456789", Status = "Активная" }
+        };
+            context.Organizations.AddRange(organizations);
+
+            // Добавление данных в таблицу User_Accounts
+            var userAccounts = new[]
+            {
+            new UserAccount {RoleId = 1, Login = "ivanov", Password = "ivanov_password", LastLogin = null, LastPasswordChange = DateOnly.Parse("2024-03-20"), Status = "Активный" },
+            new UserAccount {RoleId = 2, Login = "petrov", Password = "petrov_password", LastLogin = null, LastPasswordChange = DateOnly.Parse("2024-03-21"), Status = "Активный" }
+        };
+            context.UserAccounts.AddRange(userAccounts);
+            context.SaveChanges();
+        }
+    }
+
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 }

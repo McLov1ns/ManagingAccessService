@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Runtime.CompilerServices;
 
 namespace ManagingAccessService.Models.DbModels;
 
@@ -10,7 +12,6 @@ public partial class Employee
     public string? FullName { get; set; }
 
     public string? Gender { get; set; }
-
     public DateOnly? DateOfBirth { get; set; }
 
     public string? Identifier { get; set; }

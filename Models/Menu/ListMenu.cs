@@ -5,22 +5,24 @@
         public List<ItemMenu> Menu = new List<ItemMenu>()
         {
             new ItemMenu("Home","Index","Главная"),
-            new ItemMenu("Home", "Employee", "Сотрудники"),
+            new ItemMenu("Employees", "Index", "Сотрудники"),
             new ItemMenu("Authorization", "Login", "Войти"),
         };
         public List<ItemMenu> UserMenu = new List<ItemMenu>()
         {
             new ItemMenu("Home","Index","Главная"),
+            new ItemMenu("Organizations", "Index", "Организации"),
+            new ItemMenu("Employees", "Index", "Сотрудники"),
             new ItemMenu("Authorization", "Exit", "Выйти"),
         };
         public List<ItemMenu> AdminMenu = new List<ItemMenu>()
         {
             new ItemMenu("Home","Index","Главная"),
-            new ItemMenu("Home", "Employees", "Сотрудникиb"),
-            new ItemMenu("Home", "CreateUserAccount", "Сотрудникиb"),
             new ItemMenu("Organizations", "Index", "Организации"),
             new ItemMenu("Home", "UserAccount", "Аккаунты"),
+            new ItemMenu("Employees", "Index", "Сотрудники"),
             new ItemMenu("Authorization", "Exit", "Выйти"),
+            new ItemMenu("UserAccounts", "Index", "Акаунты")
         };
     }
 }

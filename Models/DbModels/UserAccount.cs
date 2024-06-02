@@ -11,8 +11,9 @@ public partial class UserAccount
     public int AccountId { get; set; }
 
     public int? EmployeeId { get; set; }
+    [EmailAddress(ErrorMessage = "Некорректный адрес электронной почты.")]
     public string? Email { get; set; }
-
+    [Required(ErrorMessage ="Не указан логин.")]
     public string? Login { get; set; }
 
     [Required(ErrorMessage = "Не указан пароль")]
@@ -29,9 +30,10 @@ public partial class UserAccount
 
     public virtual Employee? Employee { get; set; }
     public int RoleId { get; set; }
-    public virtual Role? Role { get; set; } = new Role()
-    {
-        RoleId = 2,
-        Name = "Пользователь",
-    };
+    public virtual Role? Role { get; set; }
+        = new Role()
+        {
+            RoleId = 2,
+            Name = "Пользователь",
+        };
 }

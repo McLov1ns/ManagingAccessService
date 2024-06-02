@@ -10,18 +10,17 @@ using ManagingAccessService.Models.DbModels;
 
 namespace ManagingAccessService.Controllers
 {
-    public class OrganizationsController : Controller
+    public class EmployeesController : Controller
     {
         private readonly ManagingAccessServiceContext _context;
 
-        public OrganizationsController(ManagingAccessServiceContext context)
+        public EmployeesController(ManagingAccessServiceContext context)
         {
             _context = context;
         }
-
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Organizations.ToListAsync());
+            return View(await _context.Employees.ToListAsync());
         }
 
         public IActionResult Create()
@@ -30,15 +29,15 @@ namespace ManagingAccessService.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Organization organization)
+        public async Task<IActionResult> Create([Bind("EmployeeId,FullName,Gender,DateOfBirth,Identifier,ContactInformation,Status")] Employee employee)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(organization);
+                _context.Add(employee);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(organization);
+            return View(employee);
         }
         public async Task<IActionResult> Edit(int? id)
         {
@@ -47,18 +46,18 @@ namespace ManagingAccessService.Controllers
                 return NotFound();
             }
 
-            var organization = await _context.Organizations.FindAsync(id);
-            if (organization == null)
+            var employee = await _context.Employees.FindAsync(id);
+            if (employee == null)
             {
                 return NotFound();
             }
-            return View(organization);
+            return View(employee);
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("OrganizationId,Name,Inn,Ogrn,Status")] Organization organization)
+        public async Task<IActionResult> Edit(int id, [Bind("EmployeeId,FullName,Gender,DateOfBirth,Identifier,ContactInformation,Status")] Employee employee)
         {
-            if (id != organization.OrganizationId)
+            if (id != employee.EmployeeId)
             {
                 return NotFound();
             }
@@ -67,12 +66,12 @@ namespace ManagingAccessService.Controllers
             {
                 try
                 {
-                    _context.Update(organization);
+                    _context.Update(employee);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!OrganizationExists(organization.OrganizationId))
+                    if (!EmployeeExists(employee.EmployeeId))
                     {
                         return NotFound();
                     }
@@ -83,7 +82,7 @@ namespace ManagingAccessService.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(organization);
+            return View(employee);
         }
         public async Task<IActionResult> Delete(int? id)
         {
@@ -92,33 +91,32 @@ namespace ManagingAccessService.Controllers
                 return NotFound();
             }
 
-            var organization = await _context.Organizations
-                .FirstOrDefaultAsync(m => m.OrganizationId == id);
-            if (organization == null)
+            var employee = await _context.Employees
+                .FirstOrDefaultAsync(m => m.EmployeeId == id);
+            if (employee == null)
             {
                 return NotFound();
             }
 
-            return View(organization);
+            return View(employee);
         }
-
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var organization = await _context.Organizations.FindAsync(id);
-            if (organization != null)
+            var employee = await _context.Employees.FindAsync(id);
+            if (employee != null)
             {
-                _context.Organizations.Remove(organization);
+                _context.Employees.Remove(employee);
             }
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool OrganizationExists(int id)
+        private bool EmployeeExists(int id)
         {
-            return _context.Organizations.Any(e => e.OrganizationId == id);
+            return _context.Employees.Any(e => e.EmployeeId == id);
         }
     }
 }

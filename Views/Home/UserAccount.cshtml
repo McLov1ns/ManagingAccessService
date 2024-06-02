@@ -5,7 +5,9 @@
 }
 
 <h2>Учетные записи</h2>
-<a href="/Home/CreateUserAccount">Создать новую учетную запись</a>
+@if (User.IsInRole("Администратор"))
+{
+    <a href="/Home/CreateUserAccount">Создать новую учетную запись</a>}
 <table class="table">
     <thead>
         <tr>

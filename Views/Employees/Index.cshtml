@@ -1,0 +1,50 @@
+﻿@model IEnumerable<ManagingAccessService.Models.DbModels.Employee>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Наши сотрудники</h1>
+@if (User.IsInRole("Администратор"))
+{
+    <p>
+    <a asp-action="Create">Добавить</a>
+</p>}
+<table class="table">
+    <thead>
+        <tr>
+            <th>ФИО</th>
+            <th>Пол</th>
+            <th>Дата рождения</th>
+            <th>Контактная информация</th>
+            <th>Статус</th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.FullName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Gender)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DateOfBirth)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ContactInformation)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Status)
+            </td>
+                @if (User.IsInRole("Администратор"))
+                {
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.EmployeeId">Редактировать</a> |
+                <a asp-action="Delete" asp-route-id="@item.EmployeeId">Удалить</a>
+            </td>}
+        </tr>
+}
+    </tbody>
+</table>

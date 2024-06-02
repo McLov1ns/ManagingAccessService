@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace ManagingAccessService.Models.DbModels;
 
 public partial class Organization
 {
+    [Key]
     public int OrganizationId { get; set; }
 
     public string? Name { get; set; }

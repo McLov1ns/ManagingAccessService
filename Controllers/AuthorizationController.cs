@@ -33,22 +33,26 @@ namespace ManagingAccessService.Controllers
             if (ModelState.IsValid)
             {
                 var user = _context.UserAccounts.FirstOrDefault(u => u.Login == model.Login);
-                Role role = _context.Roles.FirstOrDefault(q => q.RoleId == user.RoleId);
                 if (user != null)
                 {
                     var encpass = EncryptPassword(model.Password!);
-                    if (encpass == user.Password && role != null)
+                    if (encpass == user.Password)
                     {
-                        user.Role = role;
-                        await Authenticate(user); // аутентификация
-
-                        return RedirectToAction("Index", "Home");
+                        var role = _context.Roles.FirstOrDefault(q => q.RoleId == user.RoleId);
+                        if (role != null)
+                        {
+                            user.Role = role;
+                            await Authenticate(user); // аутентификация
+                            return RedirectToAction("Index", "Home");
+                        }
                     }
                 }
                 ViewBag.ErrorMessage = "Неверный логин или пароль";
+                return View(model); // Ранний выход из метода, если пользователь не найден
             }
             return View(model);
         }
+
         private async Task Authenticate(UserAccount user)
         {
             // создаем один claim

@@ -5,6 +5,8 @@ namespace ManagingAccessService.Models.DbModels;
 
 public partial class WorkSchedule
 {
+    internal string DayofWeek;
+
     public int ScheduleId { get; set; }
 
     public int? EmployeeId { get; set; }
