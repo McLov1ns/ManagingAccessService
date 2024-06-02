@@ -5,6 +5,7 @@
     --foreground: #878787;
     --accent: #A43434;
 }
+
 body {
     background-color: var(--background);
     font-family: cursive;

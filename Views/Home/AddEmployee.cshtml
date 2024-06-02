@@ -1,6 +1,7 @@
 ﻿<h2>Добавить нового сотрудника</h2>
 
-<form method="post">
+@using (Html.BeginForm("AddEmployee", "Home", FormMethod.Post))
+{
     <div>
         <label for="fullName">Полное имя:</label>
         <input type="text" id="fullName" name="FullName" />
@@ -10,4 +11,4 @@
         <input type="text" id="gender" name="Gender" />
     </div>
     <button type="submit">Добавить</button>
-</form>
+}

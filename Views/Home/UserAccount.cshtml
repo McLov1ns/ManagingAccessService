@@ -1,0 +1,33 @@
+﻿@model IEnumerable<ManagingAccessService.Models.DbModels.UserAccount>
+
+@{
+    ViewData["Title"] = "Учетные записи";
+}
+
+<h2>Учетные записи</h2>
+<a href="/Home/CreateUserAccount">Создать новую учетную запись</a>
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Имя сотрудника</th>
+            <th>Логин</th>
+            <th>Последний логин(дата)</th>
+            <th>Последний пароль(дата)</th>
+            <th>Статус</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var userAccount in Model)
+        {
+            <tr>
+                <td>@userAccount.AccountId</td>
+                <td>@(userAccount.Employee != null ? userAccount.Employee.FullName : "Неизветно")</td>
+                <td>@userAccount.Login</td>
+                <td>@(userAccount.LastLogin.HasValue ? userAccount.LastLogin.Value.ToString("dd.MM.yyyy") : "Не указано")</td>
+                <td>@(userAccount.LastPasswordChange.HasValue ? userAccount.LastPasswordChange.Value.ToString("dd.MM.yyyy") : "Не указано")</td>
+                <td>@userAccount.Status</td>
+            </tr>
+        }
+    </tbody>
+</table>
