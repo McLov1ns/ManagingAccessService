@@ -1,0 +1,38 @@
+﻿@model ManagingAccessService.Models.DbModels.UserAccount
+@{
+    ViewData["Title"] = "Создать учетную запись";
+}
+<h2>Создать учетную запись</h2>
+<form method="post">
+    <div>
+        <label for="employeeId">Сотрудник:</label>
+        <select id="employeeId" name="EmployeeId">
+            <option value="">Выберите сотрудника</option>
+            @foreach (var employee in ViewBag.Employees)
+            {
+                <option value="@employee.EmployeeId">@employee.FullName</option>
+            }
+        </select>
+    </div>
+    <div>
+        <label for="login">Логин:</label>
+        <input type="text" id="login" name="Login" />
+        @Html.ValidationMessageFor(m => m.Login)
+    </div>
+    <div>
+        <label for="password">Пароль:</label>
+        <input type="password" id="password" name="Password" />
+        @Html.ValidationMessageFor(m => m.Password)
+    </div>
+    <div>
+        <label for="roleId">Роль:</label>
+        <select id="roleId" name="RoleId">
+            @foreach (var role in ViewBag.Roles)
+            {
+                <option value="@role.Value">@role.Text</option>
+            }
+        </select>
+        @Html.ValidationMessageFor(m => m.EmployeeId)
+    </div>
+    <button type="submit">Создать</button>
+</form>
