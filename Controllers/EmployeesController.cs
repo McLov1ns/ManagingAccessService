@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ManagingAccessService.Models.DBContext;
 using ManagingAccessService.Models.DbModels;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ManagingAccessService.Controllers
 {
@@ -22,7 +23,7 @@ namespace ManagingAccessService.Controllers
         {
             return View(await _context.Employees.ToListAsync());
         }
-
+        [Authorize(Roles = "Администратор")]
         public IActionResult Create()
         {
             return View();
@@ -39,6 +40,7 @@ namespace ManagingAccessService.Controllers
             }
             return View(employee);
         }
+        [Authorize(Roles = "Администратор")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -84,6 +86,7 @@ namespace ManagingAccessService.Controllers
             }
             return View(employee);
         }
+        [Authorize(Roles = "Администратор")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -104,13 +107,43 @@ namespace ManagingAccessService.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+
             var employee = await _context.Employees.FindAsync(id);
+            var userAccount = await _context.UserAccounts.FirstOrDefaultAsync(u => u.EmployeeId == employee.EmployeeId);
+            userAccount.EmployeeId = null;
+            if (userAccount != null)
+            {
+                _context.UserAccounts.Update(userAccount);
+            }
+
+            await _context.SaveChangesAsync();
+
             if (employee != null)
             {
                 _context.Employees.Remove(employee);
             }
 
             await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Genocide(List<int> ids)
+        {
+            if (ids == null || ids.Count == 0)
+            {
+                // Если нет выбранных идентификаторов, перенаправляем обратно к списку
+                return RedirectToAction(nameof(Index));
+            }
+
+            var employeesToDelete = await _context.Employees.Where(e => ids.Contains(e.EmployeeId)).ToListAsync();
+
+            if (employeesToDelete.Any())
+            {
+                _context.Employees.RemoveRange(employeesToDelete);
+                await _context.SaveChangesAsync();
+            }
+
             return RedirectToAction(nameof(Index));
         }
 

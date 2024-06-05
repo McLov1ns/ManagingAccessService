@@ -19,10 +19,10 @@
         {
             new ItemMenu("Home","Index","Главная"),
             new ItemMenu("Organizations", "Index", "Организации"),
-            new ItemMenu("Home", "UserAccount", "Аккаунты"),
             new ItemMenu("Employees", "Index", "Сотрудники"),
+            new ItemMenu("UserAccounts", "Index", "Акаунты"),
             new ItemMenu("Authorization", "Exit", "Выйти"),
-            new ItemMenu("UserAccounts", "Index", "Акаунты")
+            new ItemMenu("Home", "Vindex", "Просмотр"),
         };
     }
 }

@@ -9,6 +9,8 @@ using ManagingAccessService.Models.DBContext;
 using ManagingAccessService.Models.DbModels;
 using System.Security.Cryptography;
 using System.Text;
+using Microsoft.CodeAnalysis.Elfie.Extensions;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ManagingAccessService.Controllers
 {
@@ -20,32 +22,13 @@ namespace ManagingAccessService.Controllers
         {
             _context = context;
         }
+        [Authorize(Roles = "Администратор")]
         public async Task<IActionResult> Index()
         {
             var managingAccessServiceContext = _context.UserAccounts.Include(u => u.Employee).Include(u => u.Role);
             return View(await managingAccessServiceContext.ToListAsync());
         }
-
-        //public IActionResult Create()
-        //{
-        //    ViewData["EmployeeId"] = new SelectList(_context.Employees, "EmployeeId", "EmployeeId");
-        //    ViewData["RoleId"] = new SelectList(_context.Roles, "RoleId", "RoleId");
-        //    return View();
-        //}
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Create([Bind("AccountId,EmployeeId,Email,Login,Password,LastLogin,LastPasswordChange,Status,RoleId")] UserAccount userAccount)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        _context.Add(userAccount);
-        //        await _context.SaveChangesAsync();
-        //        return RedirectToAction(nameof(Index));
-        //    }
-        //    ViewData["EmployeeId"] = new SelectList(_context.Employees, "EmployeeId", "EmployeeId", userAccount.EmployeeId);
-        //    ViewData["RoleId"] = new SelectList(_context.Roles, "RoleId", "RoleId", userAccount.RoleId);
-        //    return View(userAccount);
-        //}
+        [Authorize(Roles = "Администратор")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -83,18 +66,13 @@ namespace ManagingAccessService.Controllers
         {
             return _context.UserAccounts.Any(e => e.AccountId == id);
         }
-
-
-
-
+        [Authorize(Roles = "Администратор")]
         [HttpGet]
-        public IActionResult CreateUserAccount()
+        public IActionResult Create()
         {
-            // Получение списка сотрудников для передачи в представление
             var employees = _context.Employees.ToList();
             ViewBag.Employees = employees;
 
-            // Получение списка ролей для передачи в представление
             var roles = _context.Roles.Select(r => new SelectListItem
             {
                 Value = r.RoleId.ToString(),
@@ -104,9 +82,9 @@ namespace ManagingAccessService.Controllers
             ViewBag.Roles = roles;
             return View();
         }
-
+        [Authorize(Roles = "Администратор")]
         [HttpPost]
-        public async Task<IActionResult> CreateUserAccount(UserAccount userAccount)
+        public async Task<IActionResult> Create(UserAccount userAccount)
         {
             if (ModelState.IsValid)
             {
@@ -131,6 +109,7 @@ namespace ManagingAccessService.Controllers
                     // Возвращаем представление с ошибкой
                     return View(userAccount);
                 }
+                userAccount.LastLogin = DateOnly.FromDateTime(DateTime.Now);
 
                 // Хеширование пароля перед сохранением
                 userAccount.Password = EncryptPassword(userAccount.Password);
@@ -162,6 +141,8 @@ namespace ManagingAccessService.Controllers
             // Если модель не прошла валидацию, возвращаем форму снова
             return View(userAccount);
         }
+
+        [Authorize(Roles = "Администратор")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -174,24 +155,62 @@ namespace ManagingAccessService.Controllers
             {
                 return NotFound();
             }
-            ViewData["EmployeeId"] = new SelectList(_context.Employees, "EmployeeId", "EmployeeId", userAccount.EmployeeId);
-            ViewData["RoleId"] = new SelectList(_context.Roles, "RoleId", "RoleId", userAccount.RoleId);
+            var roles = _context.Roles.Select(r => new SelectListItem
+            {
+                Value = r.RoleId.ToString(),
+                Text = r.Name
+            }).ToList();
+            ViewBag.Roles = roles;
+
+            var employees = _context.Employees.ToList();
+            ViewBag.Employees = employees;
             return View(userAccount);
         }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("AccountId,EmployeeId,Email,Login,Password,LastLogin,LastPasswordChange,Status,RoleId")] UserAccount userAccount)
+        public async Task<IActionResult> Edit(int id, [Bind("AccountId,Email,EmployeeId,Login,RoleId,LastLogin,Status")] UserAccount userAccount)
         {
             if (id != userAccount.AccountId)
             {
                 return NotFound();
             }
+            var roles = _context.Roles.Select(r => new SelectListItem
+            {
+                Value = r.RoleId.ToString(),
+                Text = r.Name
+            }).ToList();
+            ViewBag.Roles = roles;
 
-            if (ModelState.IsValid)
+            var employees = _context.Employees.ToList();
+            ViewBag.Employees = employees;
+            UserAccount user = _context.UserAccounts.Find(userAccount.AccountId);
+            if (user != null)
+            {
+                if (userAccount.Login != null)
+                    user.Login = userAccount.Login;
+                if(userAccount.Password != null)
+                    user.Password = userAccount.Password;
+                if (userAccount.Password != null)
+                    user.Password = userAccount.Password;
+                if (userAccount.Email != null)
+                    user.Email = userAccount.Email;
+                if(userAccount.RoleId !=0)
+                    user.RoleId = userAccount.RoleId;
+                if (userAccount.EmployeeId != 0)
+                    user.EmployeeId = userAccount.EmployeeId;
+                if (userAccount.Status != null)
+                    user.Status = userAccount.Status;
+                    user.LastLogin = DateOnly.FromDateTime(DateTime.Now);
+
+            }
+            
+            var check = ModelState.FirstOrDefault(q => q.Key == "Login");
+            if (check.Value != null)
             {
                 try
                 {
-                    _context.Update(userAccount);
+                    _context.Update(user);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -207,124 +226,8 @@ namespace ManagingAccessService.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["EmployeeId"] = new SelectList(_context.Employees, "EmployeeId", "EmployeeId", userAccount.EmployeeId);
-            ViewData["RoleId"] = new SelectList(_context.Roles, "RoleId", "RoleId", userAccount.RoleId);
             return View(userAccount);
         }
-        [HttpGet]
-        public async Task<IActionResult> EditUserAccount(int id)
-        {
-            // Получение учетной записи пользователя по ID
-            var userAccount = await _context.UserAccounts.FindAsync(id);
-            if (userAccount == null)
-            {
-                return NotFound();
-            }
-
-            // Преобразование списка сотрудников в SelectListItem
-            var employees = _context.Employees.Select(e => new SelectListItem
-            {
-                Value = e.EmployeeId.ToString(),
-                Text = e.FullName 
-            }).ToList();
-            ViewBag.Employees = employees;
-
-            // Преобразование списка ролей в SelectListItem
-            var roles = _context.Roles.Select(r => new SelectListItem
-            {
-                Value = r.RoleId.ToString(),
-                Text = r.Name
-            }).ToList();
-            ViewBag.Roles = roles;
-
-            return View();
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> EditUserAccount(UserAccount userAccount)
-        {
-            if (ModelState.IsValid)
-            {
-                // Получаем текущую учетную запись из контекста
-                var currentAccount = await _context.UserAccounts.FindAsync(userAccount.AccountId);
-                if (currentAccount == null)
-                {
-                    return NotFound();
-                }
-
-                // Проверка на существование учетной записи с таким же логином, но исключая текущую учетную запись
-                if (currentAccount.Login != userAccount.Login)
-                {
-                    var existingUser = await _context.UserAccounts.FirstOrDefaultAsync(u => u.Login == userAccount.Login);
-                    if (existingUser != null)
-                    {
-                        // Если учетная запись с таким логином уже существует, добавляем ошибку в модель состояния
-                        ModelState.AddModelError("Login", "Учетная запись с таким логином уже существует.");
-
-                        // Преобразование списка сотрудников в SelectListItem
-                        var employees = _context.Employees.Select(e => new SelectListItem
-                        {
-                            Value = e.EmployeeId.ToString(),
-                            Text = e.FullName
-                        }).ToList();
-                        ViewBag.Employees = employees;
-
-                        // Преобразование списка ролей в SelectListItem
-                        var roles = _context.Roles.Select(r => new SelectListItem
-                        {
-                            Value = r.RoleId.ToString(),
-                            Text = r.Name
-                        }).ToList();
-                        ViewBag.Roles = roles;
-
-                        // Возвращаем представление с ошибкой
-                        return View(userAccount);
-                    }
-                }
-
-                // Обновляем поля учетной записи
-                currentAccount.Login = userAccount.Login;
-                currentAccount.Email = userAccount.Email;
-                currentAccount.EmployeeId = userAccount.EmployeeId;
-                currentAccount.RoleId = userAccount.RoleId;
-                currentAccount.Status = userAccount.Status;
-
-                // Если пароль изменен, хешируем новый пароль
-                if (!string.IsNullOrEmpty(userAccount.Password))
-                {
-                    currentAccount.Password = EncryptPassword(userAccount.Password);
-                }
-
-                // Привязка учетной записи к выбранной роли и сотруднику
-                if (userAccount.RoleId != 0)
-                {
-                    var role = _context.Roles.FirstOrDefault(q => q.RoleId == userAccount.RoleId);
-                    if (role != null)
-                    {
-                        currentAccount.Role = role;
-                    }
-                    else
-                    {
-                        throw new Exception($"Ошибка создания роли, роль {userAccount.RoleId} не существует");
-                    }
-                }
-                if (userAccount.EmployeeId != null)
-                {
-                    currentAccount.Employee = await _context.Employees.FindAsync(userAccount.EmployeeId);
-                }
-
-                // Сохранение изменений в базе данных
-                _context.UserAccounts.Update(currentAccount);
-                await _context.SaveChangesAsync();
-
-                return RedirectToAction("Index");
-            }
-
-            // Если модель не прошла валидацию, возвращаем форму снова
-            return View(userAccount);
-        }
-
-
 
         private string EncryptPassword(string password)
         {

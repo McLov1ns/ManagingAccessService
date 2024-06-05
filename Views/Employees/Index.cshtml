@@ -10,6 +10,7 @@
     <p>
     <a asp-action="Create">Добавить</a>
 </p>}
+<form asp-action="Genocide" method="post">
 <table class="table">
     <thead>
         <tr>
@@ -38,6 +39,9 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Status)
             </td>
+                    <td>
+                        <input type="checkbox" name="ids" value="@item.EmployeeId" />
+                    </td>
                 @if (User.IsInRole("Администратор"))
                 {
                     <td>
@@ -48,3 +52,5 @@
 }
     </tbody>
 </table>
+    <button type="submit" class="btn btn-danger">Удалить выбранные</button>
+</form>

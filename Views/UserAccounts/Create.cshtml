@@ -1,64 +1,51 @@
 ﻿@model ManagingAccessService.Models.DbModels.UserAccount
-
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Создать учетную запись";
 }
-
-<h1>Create</h1>
-
-<h4>UserAccount</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="EmployeeId" class="control-label"></label>
-                <select asp-for="EmployeeId" class ="form-control" asp-items="ViewBag.EmployeeId"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="Email" class="control-label"></label>
-                <input asp-for="Email" class="form-control" />
-                <span asp-validation-for="Email" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Login" class="control-label"></label>
-                <input asp-for="Login" class="form-control" />
-                <span asp-validation-for="Login" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Password" class="control-label"></label>
-                <input asp-for="Password" class="form-control" />
-                <span asp-validation-for="Password" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="LastLogin" class="control-label"></label>
-                <input asp-for="LastLogin" class="form-control" />
-                <span asp-validation-for="LastLogin" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Status" class="control-label"></label>
-                <select asp-for="Status" class="form-control">
-                    <option value="Активный">Активный</option>
-                    <option value="Не активный">Не активный</option>
-                </select>
-                <span asp-validation-for="Status" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="RoleId" class="control-label"></label>
-                <select asp-for="RoleId" class="form-control">
-                    <option value="1">Администратор</option>
-                    <option value="2">Пользователь</option>
-                </select>
-                <span asp-validation-for="RoleId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+<h2>Создать учетную запись</h2>
+<form method="post">
+    <div>
+        <label for="employeeId">Сотрудник:</label>
+        <select id="employeeId" name="EmployeeId">
+            <option value="">Выберите сотрудника</option>
+            @foreach (var employee in ViewBag.Employees)
+            {
+                <option value="@employee.EmployeeId">@employee.FullName</option>
+            }
+        </select>
     </div>
-</div>
-
-<div>
-    <a asp-action="Index">Назад</a>
-</div>
+    <div>
+        <label for="email">Email:</label>
+        <input type="text" id="email" name="Email" />
+        @Html.ValidationMessageFor(m => m.Email)
+    </div>
+    <div>
+        <label for="login">Логин:</label>
+        <input type="text" id="login" name="Login" />
+        @Html.ValidationMessageFor(m => m.Login)
+    </div>
+    <div>
+        <label for="password">Пароль:</label>
+        <input type="password" id="password" name="Password" />
+        @Html.ValidationMessageFor(m => m.Password)
+    </div>
+    <div>
+        <label for="status">Статус:</label>
+        <select id="status" name="Status">
+            <option value="Активный">Активный</option>
+            <option value="Не активный">Не активный</option>
+        </select>
+        @Html.ValidationMessageFor(m => m.EmployeeId)
+    </div>
+    <div>
+        <label for="roleId">Роль:</label>
+        <select id="roleId" name="RoleId">
+            @foreach (var role in ViewBag.Roles)
+            {
+                <option value="@role.Value">@role.Text</option>
+            }
+        </select>
+        @Html.ValidationMessageFor(m => m.EmployeeId)
+    </div>
+    <button type="submit">Создать</button>
+</form>

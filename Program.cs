@@ -3,6 +3,7 @@ using ManagingAccessService.Models.DBContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +17,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     {
         option.LoginPath = new PathString("/Authorization/Login");
         option.LogoutPath = new PathString("/Authorization/Login");
+        option.AccessDeniedPath = "/Home/index";
     });
 
 builder.Services.AddAuthorization();

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ManagingAccessService.Models.DBContext;
 using ManagingAccessService.Models.DbModels;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ManagingAccessService.Controllers
 {
@@ -23,7 +24,7 @@ namespace ManagingAccessService.Controllers
         {
             return View(await _context.Organizations.ToListAsync());
         }
-
+        [Authorize(Roles = "Администратор")]
         public IActionResult Create()
         {
             return View();
@@ -40,6 +41,7 @@ namespace ManagingAccessService.Controllers
             }
             return View(organization);
         }
+        [Authorize(Roles = "Администратор")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -85,6 +87,7 @@ namespace ManagingAccessService.Controllers
             }
             return View(organization);
         }
+        [Authorize(Roles = "Администратор")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
