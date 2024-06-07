@@ -1,1 +1,35 @@
-﻿
+﻿@model ManagingAccessService.ViewModels.HomeViewModel
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<h2>Текущий пользователь</h2>
+
+<table class="table">
+    <tr>
+        <th>ФИО сотрудника</th>
+        <td>@(Model.Employee?.FullName ?? "-")</td>
+    </tr>
+    <tr>
+        <th>Email</th>
+        <td>@(Model.Account?.Email ?? "-")</td>
+    </tr>
+    <tr>
+        <th>Login</th>
+        <td>@(Model.Account?.Login ?? "-")</td>
+    </tr>
+    <tr>
+        <th>Статус сотрудника</th>
+        <td>@(Model.Employee?.Status ?? "-")</td>
+    </tr>
+    <tr>
+        <th>Статус аккаунта</th>
+        <td>@(Model.Account?.Status ?? "-")</td>
+    </tr>
+    <tr>
+        <th>Контактная информация</th>
+        <td>@(Model.Employee?.ContactInformation ?? "-")</td>
+    </tr>
+</table>
+

@@ -128,6 +128,7 @@ namespace ManagingAccessService.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Администратор")]
         public async Task<IActionResult> Genocide(List<int> ids)
         {
             if (ids == null || ids.Count == 0)

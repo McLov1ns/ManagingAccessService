@@ -22,7 +22,6 @@
             new ItemMenu("Employees", "Index", "Сотрудники"),
             new ItemMenu("UserAccounts", "Index", "Акаунты"),
             new ItemMenu("Authorization", "Exit", "Выйти"),
-            new ItemMenu("Home", "Vindex", "Просмотр"),
         };
     }
 }

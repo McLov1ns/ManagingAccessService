@@ -34,9 +34,8 @@ namespace Lab1.Controllers
             ViewBag.UserRole = userRole;
         }
         [Authorize]
-        public async Task<IActionResult> Vindex()
+        public async Task<IActionResult> Index()
         {
-            
             // Получаем текущий пользовательский идентификатор
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
@@ -55,12 +54,6 @@ namespace Lab1.Controllers
 
 
             return View(vm);
-        }
-        [Authorize]
-        public IActionResult Index()
-        {
-            CheckRole();
-            return View();
         }
     }
 }

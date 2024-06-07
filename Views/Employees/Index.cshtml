@@ -22,7 +22,8 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+    @foreach (var item in Model) 
+    {
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.FullName)
@@ -39,18 +40,20 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Status)
             </td>
-                    <td>
-                        <input type="checkbox" name="ids" value="@item.EmployeeId" />
-                    </td>
                 @if (User.IsInRole("Администратор"))
                 {
                     <td>
-                        <a asp-action="Edit" asp-route-id="@item.EmployeeId">Редактировать</a> |
+                @* <input type="checkbox" name="ids" value="@item.EmployeeId" /> | *@
+                <a asp-action="Edit" asp-route-id="@item.EmployeeId">Редактировать</a> |
                 <a asp-action="Delete" asp-route-id="@item.EmployeeId">Удалить</a>
-            </td>}
+                    </td>
+                }
         </tr>
-}
+    }
     </tbody>
 </table>
-    <button type="submit" class="btn btn-danger">Удалить выбранные</button>
+@* @if (User.IsInRole("Администратор"))
+    {
+        <button type="submit" class="btn btn-danger">Удалить выбранные</button>
+    } *@
 </form>
