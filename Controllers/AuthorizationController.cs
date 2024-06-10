@@ -73,7 +73,7 @@ namespace ManagingAccessService.Controllers
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToAction("Index", "Home");
         }
-        private string EncryptPassword(string password)
+        public string EncryptPassword(string password)
         {
             using (SHA512 sha512 = SHA512.Create())
             {

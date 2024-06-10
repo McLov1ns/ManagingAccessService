@@ -1,12 +1,15 @@
 ﻿@model ManagingAccessService.ViewModels.HomeViewModel
+@using System.Security.Claims
 
 @{
     ViewData["Title"] = "Home Page";
+    string userRole = ViewBag.UserRole;
 }
 
 <h2>Текущий пользователь</h2>
 
 <table class="table">
+    <p>Авторизированны, @User.FindFirst(ClaimTypes.Role).Value</p>
     <tr>
         <th>ФИО сотрудника</th>
         <td>@(Model.Employee?.FullName ?? "-")</td>

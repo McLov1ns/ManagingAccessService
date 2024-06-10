@@ -11,23 +11,21 @@
                 {
                     @foreach (var item in listMenu.Menu)
                     {
-                        <li class="headerli"><button class="btn btn-primary"><a class="aClass" href="@Url.Action(item.Action, item.Controller)">@item.Label</a></button></li>
+                        <li class="headerli"><button class="btnm btn-primary"><a class="aClass" href="@Url.Action(item.Action, item.Controller)">@item.Label</a></button></li>
                     }
                 }
                 else if (User.IsInRole("Пользователь"))
                 {
-                    <p>авторизированны, @User.FindFirst(ClaimTypes.Role).Value</p>
                     @foreach (var item in listMenu.UserMenu)
                     {
-                        <li class="headerli"><button class="btn btn-primary"><a class="aClass" href="@Url.Action(item.Action, item.Controller)">@item.Label</a></button></li>
+                        <li class="headerli"><button class="btnm btn-primary"><a class="aClass" href="@Url.Action(item.Action, item.Controller)">@item.Label</a></button></li>
                     }
                 }
                 else if (User.IsInRole("Администратор"))
                 {
-                    <p>авторизированны, @User.FindFirst(ClaimTypes.Role).Value</p>
                     @foreach (var item in listMenu.AdminMenu)
                     {
-                        <li class="headerli"><button class="btn btn-primary"><a class="aClass" href="@Url.Action(item.Action, item.Controller)">@item.Label</a></button></li>
+                        <li class="headerli"><button class="btnm btn-primary"><a class="aClass" href="@Url.Action(item.Action, item.Controller)">@item.Label</a></button></li>
                     }
                 }
             </ul>

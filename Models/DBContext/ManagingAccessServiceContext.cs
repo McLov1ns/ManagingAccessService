@@ -11,7 +11,11 @@ public partial class ManagingAccessServiceContext : DbContext
         : base(options)
     {
         Database.EnsureCreated();
-        //DbInitializer.Initialize(this);
+        DbInitializer.Initialize(this);
+    }
+
+    public ManagingAccessServiceContext()
+    {
     }
 
     public virtual DbSet<AccessLog> AccessLogs { get; set; }
@@ -41,8 +45,12 @@ public partial class ManagingAccessServiceContext : DbContext
     public virtual DbSet<WorkSchedule> WorkSchedules { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=ManagingAccessService;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False");
-
+    {
+        if (!optionsBuilder.IsConfigured)
+        {
+            optionsBuilder.UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=ManagingAccessService;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False");
+        } 
+    }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         
@@ -351,8 +359,8 @@ public partial class ManagingAccessServiceContext : DbContext
             // Добавление данных в таблицу Employees
             var employees = new[]
             {
-            new Employee { EmployeeId = 1, FullName = "Иванов Иван Иванович", Gender = "Мужской", DateOfBirth = DateOnly.Parse("1990-05-15"), Identifier = "12345678", ContactInformation = "телефон: 123-456, email: ivanov@example.com", Status = "Активный" },
-            new Employee { EmployeeId = 2, FullName = "Петров Петр Петрович", Gender = "Мужской", DateOfBirth = DateOnly.Parse("1985-08-25"), Identifier = "87654321", ContactInformation = "телефон: 987-654, email: petrov@example.com", Status = "Активный" }
+            new Employee {FullName = "Иванов Иван Иванович", Gender = "Мужской", DateOfBirth = DateOnly.Parse("1990-05-15"), Identifier = "12345678", ContactInformation = "телефон: 123-456, email: ivanov@example.com", Status = "Активный" },
+            new Employee {FullName = "Петров Петр Петрович", Gender = "Мужской", DateOfBirth = DateOnly.Parse("1985-08-25"), Identifier = "87654321", ContactInformation = "телефон: 987-654, email: petrov@example.com", Status = "Активный" }
         };
             context.Employees.AddRange(employees);
 
@@ -367,18 +375,18 @@ public partial class ManagingAccessServiceContext : DbContext
             // Добавление данных в таблицу Organizations
             var organizations = new[]
             {
-            new Organization { OrganizationId = 1, Name = "ООО \"Рога и копыта\"", Inn = "1234567890", Ogrn = "0987654321", Status = "Активная" },
-            new Organization { OrganizationId = 2, Name = "ООО \"Птичка\"", Inn = "9876543210", Ogrn = "0123456789", Status = "Активная" }
+            new Organization {Name = "ООО \"Рога и копыта\"", Inn = "1234567890", Ogrn = "0987654321", Status = "Активная" },
+            new Organization {Name = "ООО \"Птичка\"", Inn = "9876543210", Ogrn = "0123456789", Status = "Активная" }
         };
             context.Organizations.AddRange(organizations);
 
             // Добавление данных в таблицу User_Accounts
-            var userAccounts = new[]
-            {
-            new UserAccount {RoleId = 1, Login = "ivanov", Password = "ivanov_password", LastLogin = null, LastPasswordChange = DateOnly.Parse("2024-03-20"), Status = "Активный" },
-            new UserAccount {RoleId = 2, Login = "petrov", Password = "petrov_password", LastLogin = null, LastPasswordChange = DateOnly.Parse("2024-03-21"), Status = "Активный" }
-        };
-            context.UserAccounts.AddRange(userAccounts);
+        //    var userAccounts = new[]
+        //    {
+        //    new UserAccount {RoleId = 1, Login = "ivanov", Password = "ivanov_password", LastLogin = null, LastPasswordChange = DateOnly.Parse("2024-03-20"), Status = "Активный" },
+        //    new UserAccount {RoleId = 2, Login = "petrov", Password = "petrov_password", LastLogin = null, LastPasswordChange = DateOnly.Parse("2024-03-21"), Status = "Активный" }
+        //};
+        //    context.UserAccounts.AddRange(userAccounts);
             context.SaveChanges();
         }
     }

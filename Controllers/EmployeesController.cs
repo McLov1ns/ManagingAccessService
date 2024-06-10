@@ -86,47 +86,63 @@ namespace ManagingAccessService.Controllers
             }
             return View(employee);
         }
-        [Authorize(Roles = "Администратор")]
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
+		[Authorize(Roles = "Администратор")]
+		public async Task<IActionResult> Delete(int? id)
+		{
+			if (id == null)
+			{
+				return NotFound();
+			}
 
-            var employee = await _context.Employees
-                .FirstOrDefaultAsync(m => m.EmployeeId == id);
-            if (employee == null)
-            {
-                return NotFound();
-            }
+			var employee = await _context.Employees
+				.FirstOrDefaultAsync(m => m.EmployeeId == id);
+			if (employee == null)
+			{
+				return NotFound();
+			}
 
-            return View(employee);
-        }
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
+			return View(employee);
+		}
 
-            var employee = await _context.Employees.FindAsync(id);
-            var userAccount = await _context.UserAccounts.FirstOrDefaultAsync(u => u.EmployeeId == employee.EmployeeId);
-            userAccount.EmployeeId = null;
-            if (userAccount != null)
-            {
-                _context.UserAccounts.Update(userAccount);
-            }
+		[HttpPost, ActionName("Delete")]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> DeleteConfirmed(int id)
+		{
+			using (var transaction = await _context.Database.BeginTransactionAsync())
+			{
+				try
+				{
+					var employee = await _context.Employees.FindAsync(id);
+					if (employee == null)
+					{
+						return NotFound();
+					}
 
-            await _context.SaveChangesAsync();
+					var userAccount = await _context.UserAccounts
+						.FirstOrDefaultAsync(u => u.EmployeeId == employee.EmployeeId);
 
-            if (employee != null)
-            {
-                _context.Employees.Remove(employee);
-            }
+					if (userAccount != null)
+					{
+						userAccount.EmployeeId = null;
+						_context.UserAccounts.Update(userAccount);
+					}
 
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-        [HttpPost]
+					_context.Employees.Remove(employee);
+
+					await _context.SaveChangesAsync();
+					await transaction.CommitAsync();
+
+					return RedirectToAction(nameof(Index));
+				}
+				catch (Exception)
+				{
+					await transaction.RollbackAsync();
+					return StatusCode(StatusCodes.Status500InternalServerError, "Ошибка при удалении данных");
+				}
+			}
+		}
+
+		[HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Администратор")]
         public async Task<IActionResult> Genocide(List<int> ids)
