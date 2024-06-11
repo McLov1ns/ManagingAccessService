@@ -359,8 +359,8 @@ public partial class ManagingAccessServiceContext : DbContext
             // Добавление данных в таблицу Employees
             var employees = new[]
             {
-            new Employee {FullName = "Иванов Иван Иванович", Gender = "Мужской", DateOfBirth = DateOnly.Parse("1990-05-15"), Identifier = "12345678", ContactInformation = "телефон: 123-456, email: ivanov@example.com", Status = "Активный" },
-            new Employee {FullName = "Петров Петр Петрович", Gender = "Мужской", DateOfBirth = DateOnly.Parse("1985-08-25"), Identifier = "87654321", ContactInformation = "телефон: 987-654, email: petrov@example.com", Status = "Активный" }
+            new Employee {FullName = "Иванов Иван Иванович", Gender = "Мужской", DateOfBirth = DateOnly.Parse("1990-05-15"), Identifier = "12345678", ContactInformation = "телефон: 123-456", Status = "Активный" },
+            new Employee {FullName = "Петров Петр Петрович", Gender = "Мужской", DateOfBirth = DateOnly.Parse("1985-08-25"), Identifier = "87654321", ContactInformation = "телефон: 987-654", Status = "Активный" }
         };
             context.Employees.AddRange(employees);
 
