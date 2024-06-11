@@ -11,7 +11,7 @@ public partial class ManagingAccessServiceContext : DbContext
         : base(options)
     {
         Database.EnsureCreated();
-        DbInitializer.Initialize(this);
+        //DbInitializer.Initialize(this);
     }
 
     public ManagingAccessServiceContext()
