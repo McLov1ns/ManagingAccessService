@@ -43,7 +43,6 @@
                 @if (User.IsInRole("Администратор"))
                 {
                     <td>
-                @* <input type="checkbox" name="ids" value="@item.EmployeeId" /> | *@
                         <a asp-action="Edit" class="btn btn-primary" asp-route-id="@item.EmployeeId">Редактировать</a> |
                         <a asp-action="Delete" class="btn btn-primary" asp-route-id="@item.EmployeeId">Удалить</a>
                     </td>
@@ -52,8 +51,4 @@
     }
     </tbody>
 </table>
-@* @if (User.IsInRole("Администратор"))
-    {
-        <button type="submit" class="btn btn-danger">Удалить выбранные</button>
-    } *@
 </form>

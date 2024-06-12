@@ -20,19 +20,6 @@ namespace Lab1.Controllers
         {
             _context = context;
         }
-        public void CheckRole()
-        {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var user = _context.UserAccounts.FirstOrDefault(u => u.AccountId == Convert.ToInt32(userId));
-
-            string userRole = "";
-            if (user != null)
-            {
-                userRole = _context.Roles.FirstOrDefault(q => q.RoleId == user.RoleId).Name;
-            }
-
-            ViewBag.UserRole = userRole;
-        }
         [Authorize]
         public async Task<IActionResult> Index()
         {
